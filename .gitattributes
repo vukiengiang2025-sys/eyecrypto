@@ -6,8 +6,14 @@
 *.gif binary
 *.ico binary
 *.webp binary
+*.bin binary
+*.zip binary
 
-# Ensure gradlew uses LF and is treated as text
-gradlew text eol=lf
-gradlew.bat text eol=crlf
+# Android Specific
+/android/gradlew text eol=lf
+/android/gradlew.bat text eol=crlf
+/android/gradle/wrapper/gradle-wrapper.jar binary
+
+# Default to auto
+* text=auto
 
