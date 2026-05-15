@@ -6,3 +6,8 @@
 *.gif binary
 *.ico binary
 *.webp binary
+
+# Ensure gradlew uses LF and is treated as text
+gradlew text eol=lf
+gradlew.bat text eol=crlf
+

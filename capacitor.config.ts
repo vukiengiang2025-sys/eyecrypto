@@ -2,7 +2,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.sentient.trading.system',
-  appName: 'Hệ thống Giao dịch Nhận thức',
+  appName: 'SentientTrading',
   webDir: 'dist',
   server: {
     androidScheme: 'https'
