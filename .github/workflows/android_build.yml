@@ -36,11 +36,16 @@ jobs:
       - name: Capacitor Sync
         run: npx cap sync
 
+      - name: Fix/Repair Gradle Wrapper
+        run: |
+          mkdir -p android/gradle/wrapper
+          curl -L https://github.com/gradle/gradle/raw/v8.14.3/gradle/wrapper/gradle-wrapper.jar -o android/gradle/wrapper/gradle-wrapper.jar
+
       - name: Build Android APK
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug
+          ./gradlew assembleDebug --no-daemon
 
       - name: Upload APK
         uses: actions/upload-artifact@v4

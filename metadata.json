@@ -1,6 +1,6 @@
 {
   "name": "Hệ thống Giao dịch Nhận thức",
-  "description": "Bảng điều khiển giao dịch AI tần suất cao với mô phỏng đồ thị thời gian thực và phân tích tâm lý địa chính trị.",
+  "description": "Bảng điều khiển giao dịch AI tần suất cao cho WTI, BTC, ETH và Vàng với mô phỏng đồ thị thời gian thực và phân tích tâm lý địa chính trị.",
   "requestFramePermissions": [],
   "majorCapabilities": ["Phân tích AI", "Trực quan hóa Thời gian thực"]
 }
