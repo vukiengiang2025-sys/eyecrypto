@@ -1,5 +1,27 @@
 import { create } from 'zustand';
-import { MarketData, AssetSymbol } from '../types';
+import { MarketData, AssetSymbol, APICredentials } from '../types';
+
+const STORAGE_KEY = 'miro_trading_creds';
+
+const loadCreds = (): APICredentials => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    try {
+      return JSON.parse(saved);
+    } catch (e) {
+      console.error('Failed to parse saved credentials');
+    }
+  }
+  return {
+    okxKey: '',
+    okxSecret: '',
+    okxPassphrase: '',
+    binanceKey: '',
+    binanceSecret: '',
+    geminiKey: '',
+    geminiSecret: '',
+  };
+};
 
 interface PortfolioState {
   balance: number;
@@ -7,15 +29,11 @@ interface PortfolioState {
   pnlPercentage: number;
 }
 
-interface MarketState {
-  selectedAsset: AssetSymbol;
-  marketData: MarketData[];
-  latency: string;
-  buffer: string;
-  lastUpdate: number;
-}
-
 interface AppStore {
+  // Credentials
+  credentials: APICredentials;
+  setCredentials: (creds: APICredentials) => void;
+
   // Market State
   selectedAsset: AssetSymbol;
   marketData: MarketData[];
@@ -35,6 +53,12 @@ interface AppStore {
 }
 
 export const useStore = create<AppStore>((set) => ({
+  credentials: loadCreds(),
+  setCredentials: (creds) => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(creds));
+    set({ credentials: creds });
+  },
+
   selectedAsset: 'WTI',
   marketData: [],
   latency: '4ms',
@@ -51,7 +75,7 @@ export const useStore = create<AppStore>((set) => ({
       volume
     };
     const newData = [...state.marketData.slice(1), newPoint];
-    return { marketData: newData, lastUpdate: Date.now() };
+    return { marketData: newData };
   }),
 
   portfolio: {

@@ -6,6 +6,16 @@ export interface MarketData {
 
 export type AssetSymbol = 'WTI' | 'BTC' | 'ETH' | 'GOLD';
 
+export interface APICredentials {
+  okxKey: string;
+  okxSecret: string;
+  okxPassphrase: string;
+  binanceKey: string;
+  binanceSecret: string;
+  geminiKey: string;
+  geminiSecret: string;
+}
+
 export interface AssetInfo {
   symbol: AssetSymbol;
   name: string;

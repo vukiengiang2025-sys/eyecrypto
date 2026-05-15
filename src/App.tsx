@@ -4,13 +4,14 @@ import PriceChart from './components/PriceChart';
 import RelationshipGraph from './components/RelationshipGraph';
 import AIAgentPanel from './components/AIAgentPanel';
 import TradeTerminal from './components/TradeTerminal';
+import SettingsPanel from './components/SettingsPanel';
 import { AssetSymbol, GraphNode, GraphLink } from './types';
 import { motion, AnimatePresence } from 'motion/react';
-import { Layers, Activity, Zap, Server, TrendingUp, Share2, MessageSquare, List } from 'lucide-react';
+import { Layers, Activity, Zap, Server, TrendingUp, Share2, MessageSquare, List, Settings } from 'lucide-react';
 import { useStore } from './store/useStore';
 import { marketService } from './services/marketService';
 
-type TabType = 'market' | 'graph' | 'ai' | 'logs';
+type TabType = 'market' | 'graph' | 'ai' | 'logs' | 'settings';
 // ... rest of the constants ...
 
 const ASSET_GRAPHS: Record<AssetSymbol, { nodes: GraphNode[], links: GraphLink[] }> = {
@@ -123,9 +124,41 @@ export default function App() {
 
   return (
     <div className="h-screen w-screen flex flex-col bg-dashboard-bg overflow-hidden safe-area-inset">
-      <DashboardHeader />
+      <DashboardHeader onOpenSettings={() => setActiveTab('settings')} />
 
       <main className="flex-1 overflow-hidden relative">
+        {/* Settings Overlay for Desktop */}
+        <AnimatePresence>
+          {activeTab === 'settings' && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 z-[100] bg-black/60 backdrop-blur-md flex items-center justify-center p-4 lg:p-12"
+            >
+              <motion.div 
+                initial={{ scale: 0.9, y: 20 }}
+                animate={{ scale: 1, y: 0 }}
+                exit={{ scale: 0.9, y: 20 }}
+                className="w-full max-w-2xl h-full max-h-[80vh] bg-card-bg border border-card-border rounded-xl shadow-2xl flex flex-col overflow-hidden"
+              >
+                <div className="p-4 border-b border-white/10 flex justify-between items-center bg-white/5">
+                  <h2 className="text-xs font-mono font-bold text-brand-primary uppercase tracking-widest">Cấu hình Hệ thống</h2>
+                  <button 
+                    onClick={() => setActiveTab('market')}
+                    className="text-gray-500 hover:text-white transition-colors"
+                  >
+                    ĐÓNG [ESC]
+                  </button>
+                </div>
+                <div className="flex-1 overflow-hidden p-6">
+                  <SettingsPanel />
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Desktop Layout - Only visible on LG+ screens */}
         <div className="hidden lg:grid h-full p-4 grid-cols-12 grid-rows-12 gap-4">
           
@@ -289,6 +322,17 @@ export default function App() {
                   </div>
                 </motion.div>
               )}
+              {activeTab === 'settings' && (
+                <motion.div 
+                  key="settings"
+                  initial={{ opacity: 0, scale: 0.95 }} 
+                  animate={{ opacity: 1, scale: 1 }} 
+                  exit={{ opacity: 0 }}
+                  className="h-full bg-card-bg border border-card-border rounded-lg p-4"
+                >
+                  <SettingsPanel />
+                </motion.div>
+              )}
             </AnimatePresence>
           </div>
 
@@ -298,7 +342,7 @@ export default function App() {
               { id: 'market', icon: <TrendingUp className="w-5 h-5"/>, label: 'Thị trường' },
               { id: 'graph', icon: <Share2 className="w-5 h-5"/>, label: 'Đồ thị' },
               { id: 'ai', icon: <MessageSquare className="w-5 h-5"/>, label: 'Nhận thức' },
-              { id: 'logs', icon: <List className="w-5 h-5"/>, label: 'Nhật ký' },
+              { id: 'settings', icon: <Settings className="w-5 h-5"/>, label: 'Cài đặt' },
             ].map((tab) => (
               <button
                 key={tab.id}

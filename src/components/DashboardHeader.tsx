@@ -1,7 +1,11 @@
-import { Cpu, Wifi, Shield } from 'lucide-react';
+import { Cpu, Wifi, Shield, Settings as SettingsIcon } from 'lucide-react';
 import { useStore } from '../store/useStore';
 
-export default function DashboardHeader() {
+interface DashboardHeaderProps {
+  onOpenSettings?: () => void;
+}
+
+export default function DashboardHeader({ onOpenSettings }: DashboardHeaderProps) {
   const { selectedAsset, marketData, latency } = useStore();
   const currentPrice = marketData.length > 0 
     ? marketData[marketData.length - 1].price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
@@ -47,6 +51,14 @@ export default function DashboardHeader() {
       </div>
 
       <div className="flex items-center gap-3 lg:gap-6">
+        <button 
+          onClick={onOpenSettings}
+          className="p-1.5 hover:bg-white/10 rounded transition-colors text-gray-400 hover:text-brand-primary"
+          title="Cài đặt hệ thống"
+        >
+          <SettingsIcon className="w-4 h-4" />
+        </button>
+
         <div className="hidden sm:flex gap-3">
           <Wifi className="w-4 h-4 text-brand-primary" />
           <Shield className="w-4 h-4 text-gray-500" />

@@ -3,6 +3,7 @@ import { GoogleGenAI } from "@google/genai";
 import { motion, AnimatePresence } from 'motion/react';
 import { Brain, Sparkles, Activity, RefreshCw, AlertCircle } from 'lucide-react';
 import { AssetSymbol } from '../types';
+import { useStore } from '../store/useStore';
 
 interface AIAgentPanelProps {
   selectedAsset: AssetSymbol;
@@ -16,6 +17,7 @@ const REASONING_FACTORS = [
 ];
 
 export default function AIAgentPanel({ selectedAsset }: AIAgentPanelProps) {
+  const { credentials } = useStore();
   const [analysis, setAnalysis] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [errorStatus, setErrorStatus] = useState<number | null>(null);
@@ -23,7 +25,7 @@ export default function AIAgentPanel({ selectedAsset }: AIAgentPanelProps) {
 
   const analyzeMarket = useCallback(async () => {
     setReasoningValues(REASONING_FACTORS.map(() => Math.random() * 100));
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = credentials.geminiKey || process.env.GEMINI_API_KEY;
     if (!apiKey) return;
 
     setLoading(true);
