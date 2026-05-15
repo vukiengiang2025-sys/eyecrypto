@@ -5,13 +5,32 @@ import RelationshipGraph from './components/RelationshipGraph';
 import AIAgentPanel from './components/AIAgentPanel';
 import TradeTerminal from './components/TradeTerminal';
 import SettingsPanel from './components/SettingsPanel';
+import PortfolioAnalytics from './components/PortfolioAnalytics';
+import CommunityFeed from './components/CommunityFeed';
+import CopyTrading from './components/CopyTrading';
+import AutoBotPanel from './components/AutoBotPanel';
+import CognitiveEvolution from './components/CognitiveEvolution';
+import MarketBattlefield from './components/MarketBattlefield';
+import PsychologyDashboard from './components/PsychologyDashboard';
+import MarketNarrator from './components/MarketNarrator';
+import BlackBoxAnalysis from './components/BlackBoxAnalysis';
+import GlobalIntelligence from './components/GlobalIntelligence';
+import RiskIsolation from './components/RiskIsolation';
+import NeuralVisualizer from './components/NeuralVisualizer';
+import ApexTerminal from './components/ApexTerminal';
+import QuantumForecast from './components/QuantumForecast';
+import SovereigntyControl from './components/SovereigntyControl';
+import SynergyMetrics from './components/SynergyMetrics';
+import SingularityCore from './components/SingularityCore';
+import UniversalOversight from './components/UniversalOversight';
+import TranscendenceView from './components/TranscendenceView';
 import { AssetSymbol, GraphNode, GraphLink } from './types';
 import { motion, AnimatePresence } from 'motion/react';
-import { Layers, Activity, Zap, Server, TrendingUp, Share2, MessageSquare, List, Settings } from 'lucide-react';
+import { Layers, Activity, Zap, Server, TrendingUp, Share2, MessageSquare, List, Settings, ShieldCheck, Users, Bot, Brain, Target, UserCheck, Radio, Database, Globe, ShieldAlert, Cpu, Sparkles, HeartPulse, Terminal, Eye, Infinity } from 'lucide-react';
 import { useStore } from './store/useStore';
 import { marketService } from './services/marketService';
 
-type TabType = 'market' | 'graph' | 'ai' | 'logs' | 'settings';
+type TabType = 'market' | 'graph' | 'ai' | 'social' | 'bot' | 'evolution' | 'battlefield' | 'psycho' | 'narrative' | 'blackbox' | 'intelligence' | 'risk' | 'neural' | 'apex' | 'quantum' | 'sovereign' | 'synergy' | 'singularity' | 'universal' | 'transcendence' | 'health' | 'settings';
 // ... rest of the constants ...
 
 const ASSET_GRAPHS: Record<AssetSymbol, { nodes: GraphNode[], links: GraphLink[] }> = {
@@ -108,6 +127,7 @@ export default function App() {
   } = useStore();
   
   const [activeTab, setActiveTab] = useState<TabType>('market');
+  const [centerTab, setCenterTab] = useState<'graph' | 'neural' | 'apex' | 'quantum' | 'sovereign' | 'synergy' | 'singularity' | 'universal' | 'transcendence'>('graph');
 
   const graphData = useMemo(() => ASSET_GRAPHS[selectedAsset], [selectedAsset]);
 
@@ -123,7 +143,8 @@ export default function App() {
   ], [latency, buffer]);
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-dashboard-bg overflow-hidden safe-area-inset">
+    <div className="h-screen w-screen flex flex-col bg-dashboard-bg overflow-hidden safe-area-inset relative cyber-grid">
+      <div className="scanline" />
       <DashboardHeader onOpenSettings={() => setActiveTab('settings')} />
 
       <main className="flex-1 overflow-hidden relative">
@@ -162,31 +183,22 @@ export default function App() {
         {/* Desktop Layout - Only visible on LG+ screens */}
         <div className="hidden lg:grid h-full p-4 grid-cols-12 grid-rows-12 gap-4">
           
-          {/* Left Column - Stats & AI */}
-          <div className="col-span-3 row-span-12 flex flex-col gap-4">
-            <div className="h-1/5">
-               <div className="p-4 bg-card-bg border border-card-border rounded-lg h-full flex flex-col justify-center">
-                  <span className="text-[10px] font-mono text-gray-500 uppercase">Tổng Tài sản ròng</span>
-                  <span className="text-2xl font-display font-extrabold text-white tracking-tight">
-                    ${portfolio.balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                  </span>
-                  <div className="flex gap-2 mt-2">
-                    <span className="text-[10px] font-mono text-brand-primary">+{portfolio.pnlPercentage}%</span>
-                    <span className="text-[10px] font-mono text-gray-600">KỂ TỪ KHI KHỞI ĐỘNG</span>
-                  </div>
-               </div>
+          {/* Left Column - Stats & Psychology */}
+          <div className="col-span-3 row-span-12 flex flex-col gap-4 overflow-hidden">
+            <div className="h-[25%] shrink-0">
+               <PortfolioAnalytics />
             </div>
-            <div className="flex-1">
+            <div className="h-[25%] shrink-0">
+               <PsychologyDashboard />
+            </div>
+            <div className="flex-1 overflow-hidden">
               <AIAgentPanel selectedAsset={selectedAsset} />
-            </div>
-            <div className="h-1/4">
-               <TradeTerminal />
             </div>
           </div>
 
           {/* Center - Main Visuals */}
-          <div className="col-span-6 row-span-12 flex flex-col gap-4">
-            <div className="h-[45%]">
+          <div className="col-span-6 row-span-12 flex flex-col gap-4 overflow-hidden">
+            <div className="h-[55%] shrink-0">
                <PriceChart 
                  data={marketData} 
                  title={`Dòng Nhận thức Thị trường :: ${selectedAsset}_INDEX`}
@@ -194,62 +206,99 @@ export default function App() {
                  onAssetChange={setSelectedAsset} 
                />
             </div>
-            <div className="flex-1">
-               <RelationshipGraph nodes={graphData.nodes} links={graphData.links} />
-            </div>
-            <div className="h-[10%] bg-black/40 border border-card-border rounded-lg flex items-center justify-around px-4">
-                {footerStats.map((stat, i) => (
-                  <div key={i} className="flex items-center gap-3">
-                    <div className={`${stat.color} opacity-40`}>{stat.icon}</div>
-                    <div className="flex flex-col">
-                      <span className="text-[8px] font-mono text-gray-500 uppercase">{stat.label}</span>
-                      <span className="text-[10px] font-mono text-white font-bold">{stat.value}</span>
-                    </div>
-                  </div>
-                ))}
+            <div className="flex-1 overflow-hidden bg-card-bg border border-card-border rounded-lg flex flex-col">
+               <div className="p-2 border-b border-card-border flex items-center justify-center gap-4 bg-black/20">
+                  {[
+                    { id: 'graph', label: 'MẠNG LƯỚI', icon: <Layers className="w-3 h-3" /> },
+                    { id: 'neural', label: 'SYNAPSE', icon: <Share2 className="w-3 h-3" /> },
+                    { id: 'apex', label: 'APEX', icon: <Target className="w-3 h-3" /> },
+                    { id: 'quantum', label: 'ĐA VŨ TRỤ', icon: <Sparkles className="w-3 h-3" /> },
+                    { id: 'sovereign', label: 'TỰ QUYẾT', icon: <ShieldCheck className="w-3 h-3" /> },
+                    { id: 'synergy', label: 'HỢP NHẤT', icon: <HeartPulse className="w-3 h-3" /> },
+                    { id: 'singularity', label: 'KỲ ĐIỂM', icon: <Zap className="w-3 h-3" /> },
+                    { id: 'universal', label: 'TỔNG QUAN', icon: <Eye className="w-3 h-3" /> },
+                    { id: 'transcendence', label: 'SIÊU VIỆT', icon: <Infinity className="w-3 h-3" /> },
+                  ].map(tab => (
+                    <button 
+                      key={tab.id}
+                      onClick={() => setCenterTab(tab.id as any)}
+                      className={`flex items-center gap-2 text-[9px] font-black uppercase px-3 py-1 rounded transition-all ${
+                        centerTab === tab.id ? 'bg-brand-primary text-black shadow-[0_0_10px_rgba(34,211,238,0.5)]' : 'text-gray-500 hover:text-white'
+                      }`}
+                    >
+                      {tab.icon}
+                      {tab.label}
+                    </button>
+                  ))}
+               </div>
+               <div className="flex-1 overflow-hidden">
+                  <AnimatePresence mode="wait">
+                    {centerTab === 'graph' && (
+                      <motion.div key="graph" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full">
+                        <RelationshipGraph nodes={graphData.nodes} links={graphData.links} />
+                      </motion.div>
+                    )}
+                    {centerTab === 'neural' && (
+                      <motion.div key="neural" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full">
+                        <NeuralVisualizer />
+                      </motion.div>
+                    )}
+                    {centerTab === 'apex' && (
+                      <motion.div key="apex" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full">
+                        <ApexTerminal />
+                      </motion.div>
+                    )}
+                    {centerTab === 'quantum' && (
+                      <motion.div key="quantum" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full">
+                        <QuantumForecast />
+                      </motion.div>
+                    )}
+                    {centerTab === 'sovereign' && (
+                      <motion.div key="sovereign" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full">
+                        <SovereigntyControl />
+                      </motion.div>
+                    )}
+                    {centerTab === 'synergy' && (
+                      <motion.div key="synergy" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full">
+                        <SynergyMetrics />
+                      </motion.div>
+                    )}
+                    {centerTab === 'singularity' && (
+                      <motion.div key="singularity" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full">
+                        <SingularityCore />
+                      </motion.div>
+                    )}
+                    {centerTab === 'universal' && (
+                      <motion.div key="universal" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full">
+                        <UniversalOversight />
+                      </motion.div>
+                    )}
+                    {centerTab === 'transcendence' && (
+                      <motion.div key="transcendence" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full">
+                        <TranscendenceView />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+               </div>
             </div>
           </div>
 
-          {/* Right Column - OSINT & Order Book */}
-          <div className="col-span-3 row-span-12 flex flex-col gap-4">
-             {/* OSINT Feed */}
-             <div className="flex-1 bg-card-bg border border-card-border rounded-lg flex flex-col overflow-hidden">
-                <div className="p-3 border-b border-card-border bg-white/5">
-                  <h3 className="text-[10px] font-mono uppercase font-bold text-brand-primary animate-pulse">Máy quét OSINT [TRỰC TIẾP]</h3>
-                </div>
-                <div className="flex-1 p-3 overflow-y-auto terminal-scroll space-y-3">
-                   {aiInsights.map((msg, i) => (
-                     <motion.div 
-                       key={i}
-                       initial={{ opacity: 0, x: -10 }}
-                       animate={{ opacity: 1, x: 0 }}
-                       className="p-2 border-l-2 border-brand-primary/20 bg-white/5 text-[9px] font-mono leading-tight"
-                     >
-                       {msg}
-                     </motion.div>
-                   ))}
-                </div>
+          {/* Right Column - Execution & Intelligence */}
+          <div className="col-span-3 row-span-12 flex flex-col gap-4 overflow-hidden">
+             <div className="h-[25%] shrink-0">
+                <TradeTerminal />
+             </div>
+             
+             <div className="h-[25%] shrink-0">
+                <MarketBattlefield />
              </div>
 
-             {/* Metrics Grid */}
-             <div className="h-1/3 grid grid-cols-2 gap-2">
-                <div className="bg-brand-primary/5 border border-brand-primary/20 rounded p-3 flex flex-col justify-center text-center">
-                   <span className="text-[8px] font-mono text-brand-primary uppercase">Rủi ro Tiếp xúc</span>
-                   <span className="text-sm font-mono font-bold text-white">0.02456</span>
-                </div>
-                <div className="bg-brand-secondary/5 border border-brand-secondary/20 rounded p-3 flex flex-col justify-center text-center">
-                   <span className="text-[8px] font-mono text-brand-secondary uppercase">Độ lệch Delta</span>
-                   <span className="text-sm font-mono font-bold text-white">0.99A/S</span>
-                </div>
-                <div className="col-span-2 bg-white/5 border border-white/10 rounded p-4 flex flex-col">
-                   <div className="flex justify-between items-end mb-1">
-                     <span className="text-[8px] font-mono text-gray-500 uppercase">Độ ổn định cốt lõi</span>
-                     <span className="text-[10px] font-mono text-brand-primary">99.8%</span>
-                   </div>
-                   <div className="h-1 bg-gray-800 rounded-full overflow-hidden">
-                      <div className="h-full bg-brand-primary w-[99.8%]" />
-                   </div>
-                </div>
+             <div className="h-[25%] shrink-0 overflow-hidden">
+                <BlackBoxAnalysis />
+             </div>
+
+             <div className="flex-1 overflow-hidden">
+                <MarketNarrator />
              </div>
           </div>
         </div>
@@ -301,25 +350,207 @@ export default function App() {
                   <AIAgentPanel selectedAsset={selectedAsset} />
                 </motion.div>
               )}
-              {activeTab === 'logs' && (
+              {activeTab === 'health' && (
                 <motion.div 
-                  key="logs"
+                  key="health"
+                  initial={{ opacity: 0, y: 20 }} 
+                  animate={{ opacity: 1, y: 0 }} 
+                  exit={{ opacity: 0, y: -20 }}
+                  className="h-full"
+                >
+                  <PortfolioAnalytics />
+                </motion.div>
+              )}
+              {activeTab === 'social' && (
+                <motion.div 
+                  key="social"
+                  initial={{ opacity: 0, x: 20 }} 
+                  animate={{ opacity: 1, x: 0 }} 
+                  exit={{ opacity: 0, x: -20 }}
+                  className="h-full flex flex-col gap-4"
+                >
+                  <div className="h-1/2">
+                    <CommunityFeed />
+                  </div>
+                  <div className="flex-1">
+                    <CopyTrading />
+                  </div>
+                </motion.div>
+              )}
+              {activeTab === 'bot' && (
+                <motion.div 
+                  key="bot"
+                  initial={{ opacity: 0, scale: 0.95 }} 
+                  animate={{ opacity: 1, scale: 1 }} 
+                  exit={{ opacity: 0 }}
+                  className="h-full"
+                >
+                  <AutoBotPanel />
+                </motion.div>
+              )}
+              {activeTab === 'evolution' && (
+                <motion.div 
+                  key="evolution"
+                  initial={{ opacity: 0, y: 20 }} 
+                  animate={{ opacity: 1, y: 0 }} 
+                  exit={{ opacity: 0, y: -20 }}
+                  className="h-full"
+                >
+                  <CognitiveEvolution />
+                </motion.div>
+              )}
+              {activeTab === 'battlefield' && (
+                <motion.div 
+                  key="battlefield"
+                  initial={{ opacity: 0, scale: 1.1 }} 
+                  animate={{ opacity: 1, scale: 1 }} 
+                  exit={{ opacity: 0 }}
+                  className="h-full"
+                >
+                  <MarketBattlefield />
+                </motion.div>
+              )}
+              {activeTab === 'psycho' && (
+                <motion.div 
+                  key="psycho"
+                  initial={{ opacity: 0, x: -20 }} 
+                  animate={{ opacity: 1, x: 0 }} 
+                  exit={{ opacity: 0, x: 20 }}
+                  className="h-full"
+                >
+                  <PsychologyDashboard />
+                </motion.div>
+              )}
+              {activeTab === 'narrative' && (
+                <motion.div 
+                  key="narrative"
+                  initial={{ opacity: 0, y: 20 }} 
+                  animate={{ opacity: 1, y: 0 }} 
+                  exit={{ opacity: 0, y: -20 }}
+                  className="h-full"
+                >
+                  <MarketNarrator />
+                </motion.div>
+              )}
+              {activeTab === 'synergy' && (
+                <motion.div 
+                  key="synergy"
                   initial={{ opacity: 0 }} 
                   animate={{ opacity: 1 }} 
                   exit={{ opacity: 0 }}
-                  className="h-full bg-card-bg border border-card-border rounded-lg p-4 font-mono text-[10px]"
+                  className="h-full"
                 >
-                  <div className="flex flex-col h-full">
-                    <h3 className="text-brand-primary mb-4 uppercase tracking-[0.2em] font-bold text-xs">MÁY QUÉT OSINT :: TRỰC TIẾP</h3>
-                    <div className="flex-1 overflow-y-auto space-y-4 terminal-scroll pr-2">
-                      {aiInsights.map((m, i) => (
-                        <div key={i} className="flex flex-col gap-1 border-l border-brand-primary/30 pl-3">
-                          <span className="text-gray-600 text-[8px]">[{new Date().toLocaleTimeString()}]</span>
-                          <span className="text-gray-300 leading-relaxed">{m}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                  <SynergyMetrics />
+                </motion.div>
+              )}
+              {activeTab === 'sovereign' && (
+                <motion.div 
+                  key="sovereign"
+                  initial={{ opacity: 0 }} 
+                  animate={{ opacity: 1 }} 
+                  exit={{ opacity: 0 }}
+                  className="h-full"
+                >
+                  <SovereigntyControl />
+                </motion.div>
+              )}
+              {activeTab === 'quantum' && (
+                <motion.div 
+                  key="quantum"
+                  initial={{ opacity: 0 }} 
+                  animate={{ opacity: 1 }} 
+                  exit={{ opacity: 0 }}
+                  className="h-full"
+                >
+                  <QuantumForecast />
+                </motion.div>
+              )}
+              {activeTab === 'intelligence' && (
+                <motion.div 
+                  key="intelligence"
+                  initial={{ opacity: 0, scale: 0.9 }} 
+                  animate={{ opacity: 1, scale: 1 }} 
+                  exit={{ opacity: 0 }}
+                  className="h-full"
+                >
+                  <GlobalIntelligence />
+                </motion.div>
+              )}
+              {activeTab === 'singularity' && (
+                <motion.div 
+                  key="singularity"
+                  initial={{ opacity: 0, scale: 1.2 }} 
+                  animate={{ opacity: 1, scale: 1 }} 
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  className="h-full"
+                >
+                  <SingularityCore />
+                </motion.div>
+              )}
+              {activeTab === 'universal' && (
+                <motion.div 
+                  key="universal"
+                  initial={{ opacity: 0, scale: 1.2 }} 
+                  animate={{ opacity: 1, scale: 1 }} 
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  className="h-full"
+                >
+                  <UniversalOversight />
+                </motion.div>
+              )}
+              {activeTab === 'transcendence' && (
+                <motion.div 
+                  key="transcendence"
+                  initial={{ opacity: 0, scale: 1.2 }} 
+                  animate={{ opacity: 1, scale: 1 }} 
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  className="h-full"
+                >
+                  <TranscendenceView />
+                </motion.div>
+              )}
+              {activeTab === 'risk' && (
+                <motion.div 
+                  key="risk"
+                  initial={{ opacity: 0, x: 20 }} 
+                  animate={{ opacity: 1, x: 0 }} 
+                  exit={{ opacity: 0, x: -20 }}
+                  className="h-full"
+                >
+                  <RiskIsolation />
+                </motion.div>
+              )}
+              {activeTab === 'neural' && (
+                <motion.div 
+                  key="neural"
+                  initial={{ opacity: 0, scale: 1.1 }} 
+                  animate={{ opacity: 1, scale: 1 }} 
+                  exit={{ opacity: 0 }}
+                  className="h-full"
+                >
+                  <NeuralVisualizer />
+                </motion.div>
+              )}
+              {activeTab === 'apex' && (
+                <motion.div 
+                  key="apex"
+                  initial={{ opacity: 0, y: -20 }} 
+                  animate={{ opacity: 1, y: 0 }} 
+                  exit={{ opacity: 0, y: 20 }}
+                  className="h-full"
+                >
+                  <ApexTerminal />
+                </motion.div>
+              )}
+              {activeTab === 'blackbox' && (
+                <motion.div 
+                  key="blackbox"
+                  initial={{ opacity: 0, y: 20 }} 
+                  animate={{ opacity: 1, y: 0 }} 
+                  exit={{ opacity: 0, y: -20 }}
+                  className="h-full"
+                >
+                  <BlackBoxAnalysis />
                 </motion.div>
               )}
               {activeTab === 'settings' && (
@@ -337,20 +568,37 @@ export default function App() {
           </div>
 
           {/* Mobile Tab Bar */}
-          <nav className="h-16 bg-card-bg border-t border-card-border flex items-center justify-around px-2 pb-safe bg-opacity-95 backdrop-blur-lg shrink-0">
+          <nav className="h-16 bg-card-bg border-t border-card-border flex items-center px-2 pb-safe bg-opacity-95 backdrop-blur-lg shrink-0 overflow-x-auto no-scrollbar">
             {[
               { id: 'market', icon: <TrendingUp className="w-5 h-5"/>, label: 'Thị trường' },
-              { id: 'graph', icon: <Share2 className="w-5 h-5"/>, label: 'Đồ thị' },
-              { id: 'ai', icon: <MessageSquare className="w-5 h-5"/>, label: 'Nhận thức' },
-              { id: 'settings', icon: <Settings className="w-5 h-5"/>, label: 'Cài đặt' },
+              { id: 'ai', icon: <MessageSquare className="w-5 h-5"/>, label: 'AI MIRO' },
+              { id: 'apex', icon: <Cpu className="w-5 h-5"/>, label: 'APEX' },
+              { id: 'quantum', icon: <Sparkles className="w-5 h-5"/>, label: 'DỰ BÁO' },
+              { id: 'sovereign', icon: <ShieldCheck className="w-5 h-5"/>, label: 'TỰ QUYẾT' },
+              { id: 'synergy', icon: <HeartPulse className="w-5 h-5"/>, label: 'HỢP NHẤT' },
+              { id: 'battlefield', icon: <Target className="w-5 h-5"/>, label: 'CHIẾN TRƯỜNG' },
+              { id: 'narrative', icon: <Radio className="w-5 h-5"/>, label: 'TỔNG HỢP' },
+              { id: 'intelligence', icon: <Globe className="w-5 h-5"/>, label: 'TÌNH BÁO' },
+              { id: 'universal', icon: <Eye className="w-5 h-5"/>, label: 'TỔNG QUAN' },
+              { id: 'transcendence', icon: <Infinity className="w-5 h-5"/>, label: 'SIÊU VIỆT' },
+              { id: 'singularity', icon: <Zap className="w-5 h-5"/>, label: 'KỲ ĐIỂM' },
+              { id: 'risk', icon: <ShieldAlert className="w-5 h-5"/>, label: 'RỦI RO' },
+              { id: 'neural', icon: <Share2 className="w-5 h-5"/>, label: 'SYNAPSE' },
+              { id: 'blackbox', icon: <Database className="w-5 h-5"/>, label: 'HỘP ĐEN' },
+              { id: 'bot', icon: <Bot className="w-5 h-5"/>, label: 'BOT' },
+              { id: 'social', icon: <Users className="w-5 h-5"/>, label: 'XÃ HỘI' },
+              { id: 'evolution', icon: <Brain className="w-5 h-5"/>, label: 'TIẾN HÓA' },
+              { id: 'psycho', icon: <UserCheck className="w-5 h-5"/>, label: 'TÂM LÝ' },
+              { id: 'health', icon: <ShieldCheck className="w-5 h-5"/>, label: 'HỒ SƠ' },
+              { id: 'settings', icon: <Settings className="w-5 h-5"/>, label: 'CÀI ĐẶT' },
             ].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as TabType)}
-                className={`flex flex-col items-center gap-1 w-1/4 transition-all ${activeTab === tab.id ? 'text-brand-primary scale-110' : 'text-gray-500'}`}
+                className={`flex flex-col items-center gap-1 min-w-[70px] transition-all shrink-0 ${activeTab === tab.id ? 'text-brand-primary scale-110' : 'text-gray-500'}`}
               >
                 {tab.icon}
-                <span className="text-[9px] font-mono uppercase tracking-tighter font-bold">{tab.label}</span>
+                <span className="text-[7px] font-mono uppercase tracking-tighter font-bold">{tab.label}</span>
               </button>
             ))}
           </nav>

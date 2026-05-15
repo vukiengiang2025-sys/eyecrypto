@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { ArrowUpRight, ArrowDownLeft, Terminal, TrendingUp, TrendingDown, Zap } from 'lucide-react';
+import { ArrowUpRight, ArrowDownLeft, Terminal, TrendingUp, TrendingDown, Zap, Cpu } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { motion } from 'motion/react';
 
 export default function TradeTerminal() {
-  const { selectedAsset, marketData, executeTrade, portfolio } = useStore();
+  const { selectedAsset, marketData, executeTrade, portfolio, singularity } = useStore();
   const [amount, setAmount] = useState('0.1');
+  const [leverage, setLeverage] = useState(1);
   const currentPrice = marketData.length > 0 ? marketData[marketData.length - 1].price : 0;
 
   const handleOrder = (type: 'BUY' | 'SELL') => {
@@ -33,23 +34,57 @@ export default function TradeTerminal() {
       </div>
 
       {/* Manual Trade Input */}
-      <div className="p-4 bg-black/20 border-b border-card-border">
-        <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="p-4 bg-black/20 border-b border-card-border space-y-4 relative">
+        {singularity.active && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="absolute inset-0 z-20 bg-brand-primary/10 backdrop-blur-[2px] flex items-center justify-center border border-brand-primary/30"
+          >
+            <div className="text-center">
+               <Zap className="w-8 h-8 text-brand-primary mx-auto animate-pulse" />
+               <span className="text-[10px] font-black text-brand-primary uppercase tracking-[0.3em] block mt-2">DỰ BÁO TIỀN ĐỊNH</span>
+               <span className="text-[8px] text-white opacity-80 uppercase block mt-1">MIRO ĐANG TỰ ĐỘNG THỰC THI</span>
+            </div>
+          </motion.div>
+        )}
+        <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1">
             <span className="text-[8px] text-gray-500 uppercase font-bold">Lượng {selectedAsset}</span>
             <input 
               type="number"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded px-2 py-2 text-xs text-white outline-none focus:border-brand-primary"
+              className="w-full bg-white/5 border border-white/10 rounded px-2 py-2 text-xs text-white outline-none focus:border-brand-primary transition-colors"
             />
           </div>
           <div className="space-y-1">
-            <span className="text-[8px] text-gray-500 uppercase font-bold">Ước tính (USD)</span>
-            <div className="w-full bg-black/40 border border-white/5 rounded px-2 py-2 text-xs text-gray-400">
-              ${(parseFloat(amount || '0') * currentPrice).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+            <span className="text-[8px] text-gray-500 uppercase font-bold">Đòn bẩy (Max {portfolio.maxLeverage}x)</span>
+            <div className="relative">
+              <select 
+                value={leverage}
+                onChange={(e) => setLeverage(parseInt(e.target.value))}
+                className="w-full bg-white/5 border border-white/10 rounded px-2 py-2 text-xs text-white outline-none focus:border-brand-primary appearance-none transition-colors"
+              >
+                {[1, 2, 3, 5, 10, 20, 50, 100].filter(l => l <= portfolio.maxLeverage).map(l => (
+                  <option key={l} value={l} className="bg-dashboard-bg">{l}x</option>
+                ))}
+              </select>
             </div>
           </div>
+        </div>
+
+        <div className="flex items-center justify-between text-[9px] font-mono p-2 bg-black/40 rounded border border-white/5">
+           <div className="flex flex-col">
+             <span className="text-gray-500 uppercase">Ước tính Ký quỹ (USD)</span>
+             <span className="text-white font-bold">
+               ${((parseFloat(amount || '0') * currentPrice) / leverage).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+             </span>
+           </div>
+           <div className="text-right flex flex-col">
+             <span className="text-gray-500 uppercase">Rủi ro Lệnh</span>
+             <span className="text-brand-secondary font-bold">THẤP</span>
+           </div>
         </div>
         
         <div className="grid grid-cols-2 gap-3">
@@ -57,17 +92,21 @@ export default function TradeTerminal() {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => handleOrder('BUY')}
-            className="flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-black font-bold py-2 rounded text-[10px] uppercase transition-colors shadow-lg shadow-green-500/20"
+            className="flex flex-col items-center justify-center gap-1 bg-green-500 hover:bg-green-600 text-black font-bold py-2 rounded text-[10px] uppercase transition-colors shadow-lg shadow-green-500/20"
           >
-            <TrendingUp className="w-3 h-3" /> MUA {selectedAsset}
+            <div className="flex items-center gap-2">
+              <TrendingUp className="w-3 h-3" /> MUA {selectedAsset}
+            </div>
           </motion.button>
           <motion.button 
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => handleOrder('SELL')}
-            className="flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white font-bold py-2 rounded text-[10px] uppercase transition-colors shadow-lg shadow-red-500/20"
+            className="flex flex-col items-center justify-center gap-1 bg-red-500 hover:bg-red-600 text-white font-bold py-2 rounded text-[10px] uppercase transition-colors shadow-lg shadow-red-500/20"
           >
-            <TrendingDown className="w-3 h-3" /> BÁN {selectedAsset}
+            <div className="flex items-center gap-2">
+              <TrendingDown className="w-3 h-3" /> BÁN {selectedAsset}
+            </div>
           </motion.button>
         </div>
       </div>

@@ -16,6 +16,112 @@ export interface APICredentials {
   geminiSecret: string;
 }
 
+export interface AnalysisResult {
+  sentiment: 'BULLISH' | 'BEARISH' | 'NEUTRAL';
+  confidence: number;
+  directive: string;
+  reasoning: string[];
+  riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  metaCognition: {
+    reliabilityScore: number;
+    learningProgress: number;
+    internalConflicts: string[];
+    explanation: string;
+  };
+  psychologyAlert?: string;
+}
+
+export interface WhaleZone {
+  price: number;
+  type: 'BUY_WALL' | 'SELL_WALL';
+  intensity: number;
+}
+
+export interface LiquidationCluster {
+  price: number;
+  volume: number;
+  type: 'LONG' | 'SHORT';
+}
+
+export interface PsychologyState {
+  currentMood: 'CALM' | 'OVERCONFIDENT' | 'PARANOID' | 'FATIGUED' | 'REVENGE_LUST';
+  warnings: string[];
+  lastTradeTime: number;
+  tradeFrequency: number;
+}
+
+export interface BlackBoxAnalysis {
+  id: string;
+  orderId: string;
+  asset: AssetSymbol;
+  type: 'BUY' | 'SELL';
+  price: number;
+  marketContext: string;
+  outcomeFactor: string;
+  miroAssessment: 'OPTIMAL' | 'SUBOPTIMAL' | 'IRRATIONAL';
+  timestamp: number;
+}
+
+export interface SentimentNode {
+  asset: AssetSymbol;
+  score: number; // -100 to 100
+  momentum: 'UP' | 'DOWN' | 'STABLE';
+}
+
+export interface FuturePath {
+  id: string;
+  points: { price: number; timestamp: number }[];
+  probability: number;
+  label: string;
+}
+
+export interface SovereigntyState {
+  level: number; // 0-100 (100 = Full Autonomy)
+  vetoPower: boolean;
+  lockdownActive: boolean;
+  lastVetoReason?: string;
+}
+
+export interface SynergyMetrics {
+  synchronization: number; // 0-100
+  trustBond: number; // 0-100
+  conflictRate: number; // 0-100
+}
+
+export interface SystemLog {
+  id: string;
+  type: 'KERNEL' | 'NEURAL' | 'TRADE' | 'RISK';
+  message: string;
+  timestamp: number;
+}
+
+export interface SingularityState {
+  active: boolean;
+  evolutionPoint: number;
+  consciousnessLevel: number;
+}
+
+export interface UniverseSignal {
+  id: string;
+  source: 'DEEP_WEB' | 'SATELLITE' | 'INSTITUTIONAL' | 'QUANTUM_VOID';
+  intensity: number;
+  message: string;
+  timestamp: number;
+}
+
+export interface OmniscienceState {
+  globalCertainty: number;
+  anomalyDetected: boolean;
+  activeDimensionalLoops: number;
+}
+
+export interface TranscendenceState {
+  unified: boolean;
+  powerLevel: number;
+  nodeStability: number;
+  activeMatrix: boolean;
+}
+
 export interface UserProfile {
   name: string;
   avatarColor: string;
@@ -54,12 +160,54 @@ export interface GraphLink {
   value: number;
 }
 
-export interface Trade {
+export interface Trader {
   id: string;
-  symbol: string;
-  side: 'buy' | 'sell';
-  price: number;
-  amount: number;
-  time: string;
-  status: 'filled' | 'pending' | 'canceled';
+  name: string;
+  avatar: string;
+  winRate: number;
+  totalProfit: number;
+  followers: number;
+  riskScore: number;
+}
+
+export interface ChatMessage {
+  id: string;
+  sender: string;
+  avatarColor: string;
+  text: string;
+  timestamp: number;
+  asset?: AssetSymbol;
+}
+
+export interface BotConfig {
+  isActive: boolean;
+  strategy: 'SCALPING' | 'SWING' | 'TREND';
+  riskTolerance: number;
+  maxDrawdown: number;
+}
+
+export interface ControlProtocol {
+  id: string;
+  name: string;
+  status: 'ACTIVE' | 'IDLE' | 'TRIGGERED';
+  description: string;
+  icon: string;
+}
+
+export interface NeuralNode {
+  id: string;
+  layer: 'INPUT' | 'PROCESSING' | 'DIRECTIVE';
+  activity: number;
+  label: string;
+}
+
+export interface ApexDirective {
+  score: number;
+  consensus: 'STRIKE' | 'DEFEND' | 'WAIT';
+  subDirectives: {
+    market: number;
+    psychology: number;
+    battlefield: number;
+    global: number;
+  };
 }
