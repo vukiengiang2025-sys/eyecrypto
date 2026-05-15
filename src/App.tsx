@@ -4,11 +4,14 @@ import PriceChart from './components/PriceChart';
 import RelationshipGraph from './components/RelationshipGraph';
 import AIAgentPanel from './components/AIAgentPanel';
 import TradeTerminal from './components/TradeTerminal';
-import { MarketData, GraphNode, GraphLink, AssetSymbol } from './types';
+import { AssetSymbol, GraphNode, GraphLink } from './types';
 import { motion, AnimatePresence } from 'motion/react';
 import { Layers, Activity, Zap, Server, TrendingUp, Share2, MessageSquare, List } from 'lucide-react';
+import { useStore } from './store/useStore';
+import { marketService } from './services/marketService';
 
 type TabType = 'market' | 'graph' | 'ai' | 'logs';
+// ... rest of the constants ...
 
 const ASSET_GRAPHS: Record<AssetSymbol, { nodes: GraphNode[], links: GraphLink[] }> = {
   WTI: {
@@ -93,51 +96,30 @@ const ASSET_GRAPHS: Record<AssetSymbol, { nodes: GraphNode[], links: GraphLink[]
 };
 
 export default function App() {
-  const [selectedAsset, setSelectedAsset] = useState<AssetSymbol>('WTI');
-  const [marketData, setMarketData] = useState<MarketData[]>([]);
+  const { 
+    selectedAsset, 
+    setSelectedAsset, 
+    marketData, 
+    portfolio, 
+    aiInsights,
+    latency,
+    buffer
+  } = useStore();
+  
   const [activeTab, setActiveTab] = useState<TabType>('market');
 
   const graphData = useMemo(() => ASSET_GRAPHS[selectedAsset], [selectedAsset]);
 
   useEffect(() => {
-    // Generate initial market data based on asset
-    const basePrice = selectedAsset === 'BTC' ? 64000 : 
-                     selectedAsset === 'ETH' ? 3400 : 
-                     selectedAsset === 'GOLD' ? 2380 : 83;
-    
-    const volatility = selectedAsset === 'BTC' ? 500 : 
-                      selectedAsset === 'ETH' ? 50 : 
-                      selectedAsset === 'GOLD' ? 20 : 2;
-
-    const initialData: MarketData[] = Array.from({ length: 50 }).map((_, i) => ({
-      time: `${i}:00`,
-      price: basePrice + (Math.random() - 0.5) * volatility,
-      volume: Math.random() * 1000
-    }));
-    setMarketData(initialData);
-
-    // Live price simulation
-    const interval = setInterval(() => {
-      setMarketData(prev => {
-        const last = prev[prev.length - 1];
-        const newPoint = {
-          time: new Date().toLocaleTimeString(),
-          price: last.price + (Math.random() - 0.5) * (volatility / 5),
-          volume: Math.random() * 1000
-        };
-        return [...prev.slice(1), newPoint];
-      });
-    }, 2000);
-
-    return () => clearInterval(interval);
+    marketService.startSimulation(selectedAsset);
   }, [selectedAsset]);
 
   const footerStats = useMemo(() => [
-    { label: 'Độ trễ', value: '4ms', icon: <Zap className="w-3 h-3"/>, color: 'text-brand-primary' },
+    { label: 'Độ trễ', value: latency, icon: <Zap className="w-3 h-3"/>, color: 'text-brand-primary' },
     { label: 'Dòng chảy', value: '0.811', icon: <Activity className="w-3 h-3"/>, color: 'text-indigo-400' },
     { label: 'Mảnh ghép', value: '293', icon: <Layers className="w-3 h-3"/>, color: 'text-yellow-400' },
-    { label: 'Bộ đệm', value: '100%', icon: <Server className="w-3 h-3"/>, color: 'text-brand-primary' },
-  ], []);
+    { label: 'Bộ đệm', value: buffer, icon: <Server className="w-3 h-3"/>, color: 'text-brand-primary' },
+  ], [latency, buffer]);
 
   return (
     <div className="h-screen w-screen flex flex-col bg-dashboard-bg overflow-hidden safe-area-inset">
@@ -152,9 +134,11 @@ export default function App() {
             <div className="h-1/5">
                <div className="p-4 bg-card-bg border border-card-border rounded-lg h-full flex flex-col justify-center">
                   <span className="text-[10px] font-mono text-gray-500 uppercase">Tổng Tài sản ròng</span>
-                  <span className="text-2xl font-display font-extrabold text-white tracking-tight">$587,420.44</span>
+                  <span className="text-2xl font-display font-extrabold text-white tracking-tight">
+                    ${portfolio.balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </span>
                   <div className="flex gap-2 mt-2">
-                    <span className="text-[10px] font-mono text-brand-primary">+14.2%</span>
+                    <span className="text-[10px] font-mono text-brand-primary">+{portfolio.pnlPercentage}%</span>
                     <span className="text-[10px] font-mono text-gray-600">KỂ TỪ KHI KHỞI ĐỘNG</span>
                   </div>
                </div>
@@ -201,18 +185,11 @@ export default function App() {
                   <h3 className="text-[10px] font-mono uppercase font-bold text-brand-primary animate-pulse">Máy quét OSINT [TRỰC TIẾP]</h3>
                 </div>
                 <div className="flex-1 p-3 overflow-y-auto terminal-scroll space-y-3">
-                   {[
-                     "KÊNH ĐÀO SUEZ: PHÁT HIỆN CỤM TẮC NGHẼN. +12 tàu.",
-                     "NHẬN ĐỊNH: BIẾN ĐỘNG GIẢM MẠNH TẠI EU_NATGAS.",
-                     "TIN TỨC: RÒ RỈ CUỘC HỌP OPEC+ GỢI Ý GIỮ NGUYÊN HẠN NGẠCH.",
-                     "CẢNH BÁO: HOẠT ĐỘNG ĐỊA CHẤN GẦN EO BIỂN HORMUZ.",
-                     "AN NINH: NGĂN CHẶN NỖ LỰC XÂM NHẬP NÚT [ID_09].",
-                   ].map((msg, i) => (
+                   {aiInsights.map((msg, i) => (
                      <motion.div 
                        key={i}
                        initial={{ opacity: 0, x: -10 }}
                        animate={{ opacity: 1, x: 0 }}
-                       transition={{ delay: i * 0.2 }}
                        className="p-2 border-l-2 border-brand-primary/20 bg-white/5 text-[9px] font-mono leading-tight"
                      >
                        {msg}
@@ -302,14 +279,7 @@ export default function App() {
                   <div className="flex flex-col h-full">
                     <h3 className="text-brand-primary mb-4 uppercase tracking-[0.2em] font-bold text-xs">MÁY QUÉT OSINT :: TRỰC TIẾP</h3>
                     <div className="flex-1 overflow-y-auto space-y-4 terminal-scroll pr-2">
-                      {[
-                        "BIỂN ĐỎ: Hoạt động hải quân tăng vọt gần Bab-el-Mandeb",
-                        "OPEC+: Cắt giảm sản lượng được xác nhận cho quý tới",
-                        "DỮ LIỆU: Dự trữ SPR ở mức thấp nhất kể từ năm 1983",
-                        "VĨ MÔ: Chỉ số lạm phát lõi của Mỹ đang hạ nhiệt - tiềm năng đồng USD yếu",
-                        "ĐỊA CHÍNH TRỊ: Giấy phép khoan dầu ở Bắc Cực được hoàn tất tại Cụm-9",
-                        "AN NINH: Ngăn chặn cuộc tấn công DDOS cục bộ vào bộ đệm sàn giao dịch",
-                      ].map((m, i) => (
+                      {aiInsights.map((m, i) => (
                         <div key={i} className="flex flex-col gap-1 border-l border-brand-primary/30 pl-3">
                           <span className="text-gray-600 text-[8px]">[{new Date().toLocaleTimeString()}]</span>
                           <span className="text-gray-300 leading-relaxed">{m}</span>

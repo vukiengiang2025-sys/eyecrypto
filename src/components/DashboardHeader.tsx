@@ -1,6 +1,12 @@
-import { Cpu, Wifi, Shield, Globe } from 'lucide-react';
+import { Cpu, Wifi, Shield } from 'lucide-react';
+import { useStore } from '../store/useStore';
 
 export default function DashboardHeader() {
+  const { selectedAsset, marketData, latency } = useStore();
+  const currentPrice = marketData.length > 0 
+    ? marketData[marketData.length - 1].price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    : '---';
+
   const time = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
 
   return (
@@ -14,7 +20,7 @@ export default function DashboardHeader() {
         <div className="hidden sm:flex gap-4 lg:gap-6">
           <div className="flex flex-col">
             <span className="text-[8px] font-mono text-gray-500 uppercase">Độ trễ</span>
-            <span className="text-[10px] font-mono text-brand-primary">2.4ms</span>
+            <span className="text-[10px] font-mono text-brand-primary">{latency}</span>
           </div>
           <div className="hidden md:flex flex-col">
             <span className="text-[8px] font-mono text-gray-500 uppercase">Độ ổn định</span>
@@ -25,15 +31,17 @@ export default function DashboardHeader() {
 
       <div className="flex items-center gap-3 lg:gap-4 overflow-x-auto no-scrollbar py-1">
         {[
-          { label: 'WTI', price: '83.67', color: 'text-brand-primary' },
-          { label: 'BTC', price: '64,120', color: 'text-orange-400' },
-          { label: 'ETH', price: '3,450', color: 'text-indigo-400' },
-          { label: 'GOLD', price: '2,380', color: 'text-yellow-400' },
+          { label: 'WTI', color: 'text-brand-primary' },
+          { label: 'BTC', color: 'text-orange-400' },
+          { label: 'ETH', color: 'text-indigo-400' },
+          { label: 'GOLD', color: 'text-yellow-400' },
         ].map((asset) => (
-          <div key={asset.label} className="flex items-center gap-2 px-2 lg:px-3 py-1 bg-white/5 rounded border border-white/10 shrink-0">
+          <div key={asset.label} className={`flex items-center gap-2 px-2 lg:px-3 py-1 bg-white/5 rounded border ${selectedAsset === asset.label ? 'border-brand-primary/50' : 'border-white/10'} shrink-0`}>
             <span className="text-[9px] lg:text-[10px] font-mono text-gray-500">{asset.label}:</span>
-            <span className={`text-[10px] lg:text-[11px] font-mono ${asset.color}`}>${asset.price}</span>
-            <div className={`w-1 h-1 rounded-full animate-ping ${asset.color.replace('text-', 'bg-')}`} />
+            <span className={`text-[10px] lg:text-[11px] font-mono ${asset.color}`}>
+              {selectedAsset === asset.label ? `$${currentPrice}` : '---'}
+            </span>
+            <div className={`w-1 h-1 rounded-full ${selectedAsset === asset.label ? 'animate-ping' : ''} ${asset.color.replace('text-', 'bg-')}`} />
           </div>
         ))}
       </div>

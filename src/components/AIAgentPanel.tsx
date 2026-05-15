@@ -8,12 +8,21 @@ interface AIAgentPanelProps {
   selectedAsset: AssetSymbol;
 }
 
+const REASONING_FACTORS = [
+  { label: 'MACRO', color: 'text-indigo-400' },
+  { label: 'SENTIMENT', color: 'text-brand-primary' },
+  { label: 'GEOPOLITICAL', color: 'text-brand-secondary' },
+  { label: 'ETF FLOWS', color: 'text-orange-400' },
+];
+
 export default function AIAgentPanel({ selectedAsset }: AIAgentPanelProps) {
   const [analysis, setAnalysis] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [errorStatus, setErrorStatus] = useState<number | null>(null);
+  const [reasoningValues, setReasoningValues] = useState<number[]>([]);
 
   const analyzeMarket = useCallback(async () => {
+    setReasoningValues(REASONING_FACTORS.map(() => Math.random() * 100));
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) return;
 
@@ -31,7 +40,7 @@ export default function AIAgentPanel({ selectedAsset }: AIAgentPanelProps) {
       const ai = new GoogleGenAI({ apiKey });
       
       const response = await ai.models.generateContent({
-        model: "gemini-1.5-flash",
+        model: "gemini-3-flash-preview",
         contents: `You are a sentient trading AI named 'MIRO-SENTIENT'. 
         Provide a brief, futuristic, high-intensity market sentiment report IN VIETNAMESE (3-4 sentences).
         Topic: ${assetNames[selectedAsset]} and its current market dynamics.
@@ -127,7 +136,7 @@ export default function AIAgentPanel({ selectedAsset }: AIAgentPanelProps) {
               animate={{ opacity: 1, y: 0 }}
               className={errorStatus === 429 ? "text-brand-secondary/90" : "text-brand-primary/90"}
             >
-              <div className="flex items-start gap-2 mb-2">
+              <div className="flex items-start gap-2 mb-4">
                 {errorStatus === 429 ? (
                   <div className="flex flex-col gap-2 w-full">
                     <div className="flex items-center gap-2 text-brand-secondary">
@@ -145,6 +154,29 @@ export default function AIAgentPanel({ selectedAsset }: AIAgentPanelProps) {
                   </div>
                 )}
               </div>
+
+              {/* Reasoning Visualization */}
+              <div className="space-y-3 mb-4">
+                <h4 className="text-[9px] text-gray-500 uppercase tracking-widest font-bold">Ma trận Lý luận</h4>
+                <div className="grid grid-cols-2 gap-3">
+                  {REASONING_FACTORS.map((factor, i) => (
+                    <div key={factor.label} className="space-y-1">
+                      <div className="flex justify-between text-[8px] font-mono">
+                        <span className="text-gray-400">{factor.label}</span>
+                        <span className={factor.color}>{reasoningValues[i]?.toFixed(1)}%</span>
+                      </div>
+                      <div className="h-0.5 bg-white/5 rounded-full overflow-hidden">
+                        <motion.div 
+                          initial={{ width: 0 }}
+                          animate={{ width: `${reasoningValues[i]}%` }}
+                          className={`h-full ${factor.color.replace('text-', 'bg-')}`}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               {errorStatus === 429 && (
                 <div className="mt-2 text-[9px] text-gray-500 border border-brand-secondary/20 p-2 rounded bg-brand-secondary/5">
                   Mẹo: Bạn có thể chọn khóa API trả phí trong bảng <strong>Cài đặt &gt; Secrets</strong> để tăng đáng kể băng thông trí tuệ.
