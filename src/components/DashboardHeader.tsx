@@ -6,7 +6,7 @@ interface DashboardHeaderProps {
 }
 
 export default function DashboardHeader({ onOpenSettings }: DashboardHeaderProps) {
-  const { selectedAsset, marketData, latency } = useStore();
+  const { selectedAsset, marketData, latency, dataSource, profile, portfolio } = useStore();
   const currentPrice = marketData.length > 0 
     ? marketData[marketData.length - 1].price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
     : '---';
@@ -16,19 +16,35 @@ export default function DashboardHeader({ onOpenSettings }: DashboardHeaderProps
   return (
     <header className="h-14 lg:h-16 border-b border-card-border bg-black/40 flex items-center justify-between px-4 lg:px-6 backdrop-blur-md z-50 shrink-0">
       <div className="flex items-center gap-4 lg:gap-8">
-        <div className="flex flex-col">
-          <span className="text-[8px] lg:text-[10px] font-mono text-brand-primary tracking-[0.2em] font-bold">EPUS 4.7</span>
-          <span className="text-[12px] lg:text-[14px] font-display font-extrabold tracking-tighter text-white whitespace-nowrap uppercase">Hệ thống MIRO</span>
+        <div className="flex items-center gap-3">
+          <div 
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-bold text-black shadow-lg shadow-black/50"
+            style={{ backgroundColor: profile.avatarColor }}
+          >
+            {profile.name.substring(0, 2)}
+          </div>
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2">
+              <span className="text-[8px] lg:text-[10px] font-mono text-brand-primary tracking-[0.2em] font-bold">{profile.name}</span>
+              <div className="flex items-center gap-1">
+                <div className={`w-1 h-1 rounded-full animate-ping ${dataSource === 'LIVE' ? 'bg-green-500' : 'bg-brand-secondary'}`} />
+                <span className={`text-[7px] font-mono uppercase tracking-[0.1em] ${dataSource === 'LIVE' ? 'text-green-500' : 'text-brand-secondary'}`}>
+                  {dataSource}
+                </span>
+              </div>
+            </div>
+            <span className="text-[12px] lg:text-[14px] font-display font-extrabold tracking-tighter text-white whitespace-nowrap uppercase">Hệ thống MIRO</span>
+          </div>
         </div>
 
         <div className="hidden sm:flex gap-4 lg:gap-6">
           <div className="flex flex-col">
+            <span className="text-[8px] font-mono text-gray-500 uppercase">Số dư Khả dụng</span>
+            <span className="text-[10px] font-mono text-white font-bold">${portfolio.balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+          </div>
+          <div className="flex flex-col">
             <span className="text-[8px] font-mono text-gray-500 uppercase">Độ trễ</span>
             <span className="text-[10px] font-mono text-brand-primary">{latency}</span>
-          </div>
-          <div className="hidden md:flex flex-col">
-            <span className="text-[8px] font-mono text-gray-500 uppercase">Độ ổn định</span>
-            <span className="text-[10px] font-mono text-brand-primary">99.7%</span>
           </div>
         </div>
       </div>

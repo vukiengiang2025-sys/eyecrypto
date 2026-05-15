@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
-import { Shield, Key, Lock, Eye, EyeOff, Save, Info } from 'lucide-react';
+import { Shield, Key, Lock, Eye, EyeOff, Save, Info, User, Palette } from 'lucide-react';
 import { useStore } from '../store/useStore';
 
 export default function SettingsPanel() {
-  const { credentials, setCredentials } = useStore();
+  const { credentials, setCredentials, profile, setProfile } = useStore();
   const [formData, setFormData] = useState(credentials);
+  const [profileData, setProfileData] = useState(profile);
   const [showSecrets, setShowSecrets] = useState<Record<string, boolean>>({});
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
 
@@ -16,6 +17,7 @@ export default function SettingsPanel() {
   const handleSave = () => {
     setSaveStatus('saving');
     setCredentials(formData);
+    setProfile(profileData);
     setTimeout(() => {
       setSaveStatus('saved');
       setTimeout(() => setSaveStatus('idle'), 2000);
@@ -26,8 +28,47 @@ export default function SettingsPanel() {
     <div className="h-full flex flex-col gap-6 overflow-y-auto terminal-scroll p-1 font-mono">
       <div className="flex items-center gap-3 border-b border-white/10 pb-4">
         <Shield className="w-5 h-5 text-brand-primary" />
-        <h2 className="text-sm font-bold text-white uppercase tracking-widest">Cấu hình API & Bảo mật</h2>
+        <h2 className="text-sm font-bold text-white uppercase tracking-widest">Trung tâm Điều khiển & Cá nhân hóa</h2>
       </div>
+
+      {/* Profile Section */}
+      <section className="space-y-4">
+        <div className="flex items-center gap-2 mb-2">
+          <div className="w-1 h-3 bg-brand-primary rounded-full" />
+          <h3 className="text-[11px] font-bold text-white uppercase tracking-wider">Hồ sơ Chỉ huy</h3>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-1.5">
+            <label className="text-[9px] text-gray-500 uppercase flex items-center gap-1.5">
+              <User className="w-3 h-3" /> Tên hiển thị
+            </label>
+            <input 
+              type="text"
+              value={profileData.name}
+              onChange={(e) => setProfileData({ ...profileData, name: e.target.value.toUpperCase() })}
+              className="w-full bg-white/5 border border-white/10 rounded px-3 py-2 text-xs text-brand-primary focus:border-brand-primary outline-none transition-colors font-bold"
+              placeholder="Nhập tên của bạn"
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-[9px] text-gray-500 uppercase flex items-center gap-1.5">
+              <Palette className="w-3 h-3" /> Màu đại diện
+            </label>
+            <div className="flex gap-2">
+              {['#22d3ee', '#fbbf24', '#818cf8', '#f87171', '#34d399'].map(color => (
+                <button
+                  key={color}
+                  onClick={() => setProfileData({ ...profileData, avatarColor: color })}
+                  className={`w-6 h-6 rounded-full border-2 transition-transform ${profileData.avatarColor === color ? 'border-white scale-110' : 'border-transparent'}`}
+                  style={{ backgroundColor: color }}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
 
       <div className="bg-brand-primary/5 border border-brand-primary/20 p-4 rounded-lg flex gap-3">
         <Info className="w-5 h-5 text-brand-primary shrink-0 mt-0.5" />

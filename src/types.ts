@@ -16,6 +16,23 @@ export interface APICredentials {
   geminiSecret: string;
 }
 
+export interface UserProfile {
+  name: string;
+  avatarColor: string;
+  rank: 'NOVICE' | 'ELITE' | 'SENTIENT';
+  preferredAssets: AssetSymbol[];
+}
+
+export interface Order {
+  id: string;
+  asset: AssetSymbol;
+  type: 'BUY' | 'SELL';
+  price: number;
+  amount: number;
+  timestamp: number;
+  status: 'COMPLETED' | 'PENDING';
+}
+
 export interface AssetInfo {
   symbol: AssetSymbol;
   name: string;

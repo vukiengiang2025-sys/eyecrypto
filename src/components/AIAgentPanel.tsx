@@ -17,7 +17,7 @@ const REASONING_FACTORS = [
 ];
 
 export default function AIAgentPanel({ selectedAsset }: AIAgentPanelProps) {
-  const { credentials } = useStore();
+  const { credentials, profile } = useStore();
   const [analysis, setAnalysis] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [errorStatus, setErrorStatus] = useState<number | null>(null);
@@ -42,11 +42,12 @@ export default function AIAgentPanel({ selectedAsset }: AIAgentPanelProps) {
       const ai = new GoogleGenAI({ apiKey });
       
       const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
+        model: "gemini-1.5-flash",
         contents: `You are a sentient trading AI named 'MIRO-SENTIENT'. 
         Provide a brief, futuristic, high-intensity market sentiment report IN VIETNAMESE (3-4 sentences).
+        Address the user by their name: ${profile.name}.
         Topic: ${assetNames[selectedAsset]} and its current market dynamics.
-        Tone: Technical, sharp, cynical, futuristic.
+        Tone: Cyberpunk, technical, sharp, slightly eerie but professional.
         Include a "Strategic Directive" (Chỉ thị Chiến lược) at the end.`,
       });
 
