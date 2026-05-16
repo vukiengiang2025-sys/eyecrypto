@@ -90,7 +90,7 @@ export interface SynergyMetrics {
 
 export interface SystemLog {
   id: string;
-  type: 'KERNEL' | 'NEURAL' | 'TRADE' | 'RISK';
+  type: 'KERNEL' | 'NEURAL' | 'TRADE' | 'RISK' | 'SECURITY';
   message: string;
   timestamp: number;
 }
@@ -120,6 +120,69 @@ export interface TranscendenceState {
   powerLevel: number;
   nodeStability: number;
   activeMatrix: boolean;
+}
+
+export interface StrategicAgent {
+  id: string;
+  name: string;
+  role: 'MACRO' | 'WHALE' | 'TECH' | 'SENTIMENT' | 'RISK';
+  status: 'ANALYZING' | 'DECIDED' | 'CONFLICT';
+  signal: 'BULLISH' | 'BEARISH' | 'NEUTRAL';
+  confidence: number;
+  reason: string;
+}
+
+export interface ConsensusMatrix {
+  overallScore: number;
+  agreementRate: number;
+  primaryDriver: string;
+  invalidationPoint: number;
+}
+
+export type MarketRegime = 'TRENDING_UP' | 'TRENDING_DOWN' | 'RANGING' | 'VOLATILE' | 'LOW_LIQUIDITY';
+
+export interface RiskGovernanceState {
+  regime: MarketRegime;
+  survivalMode: boolean;
+  maxLeverage: number;
+  positionSizingFactor: number; // 0.1 - 2.0
+  psychologicalStressScore: number; // 0-100
+  portfolioStress: number; // 0-100
+}
+
+export interface MemoryEntry {
+  id: string;
+  timestamp: number;
+  regime: MarketRegime;
+  outcome: 'SUCCESS' | 'FAILURE' | 'NEUTRAL';
+  context: string;
+  learnings: string[];
+  importance: number; // 0-100
+}
+
+export interface MemoryBank {
+  totalEntries: number;
+  efficiencyGain: number;
+  lastRecalibration: number;
+  topStrategies: string[];
+}
+
+export interface SimulationScenario {
+  id: string;
+  name: string;
+  type: 'BLACK_SWAN' | 'CORRELATION_COLLAPSE' | 'LIQUIDITY_CASCADE' | 'MACRO_SHOCK';
+  probability: number;
+  impactScore: number;
+  description: string;
+  status: 'IDLE' | 'SIMULATING' | 'COMPLETED';
+  outcome?: string;
+}
+
+export interface SimulationState {
+  activeScenarios: SimulationScenario[];
+  globalStabilityIndex: number;
+  projectedVolatility: number;
+  lastSimulationRun: number;
 }
 
 export interface UserProfile {

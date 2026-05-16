@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { MarketData, AssetSymbol, APICredentials, UserProfile, Order, AnalysisResult, Trader, ChatMessage, BotConfig, PsychologyState, WhaleZone, LiquidationCluster, BlackBoxAnalysis, SentimentNode, ControlProtocol, NeuralNode, ApexDirective, FuturePath, SovereigntyState, SynergyMetrics, SystemLog, SingularityState, UniverseSignal, OmniscienceState, TranscendenceState } from '../types';
+import { MarketData, AssetSymbol, APICredentials, UserProfile, Order, AnalysisResult, Trader, ChatMessage, BotConfig, PsychologyState, WhaleZone, LiquidationCluster, BlackBoxAnalysis, SentimentNode, ControlProtocol, NeuralNode, ApexDirective, FuturePath, SovereigntyState, SynergyMetrics, SystemLog, SingularityState, UniverseSignal, OmniscienceState, TranscendenceState, StrategicAgent, ConsensusMatrix, RiskGovernanceState, MarketRegime, MemoryEntry, MemoryBank, SimulationState, SimulationScenario } from '../types';
 
 // ... (rest of imports and helpers)
 
@@ -144,6 +144,27 @@ interface AppStore {
   transcendence: TranscendenceState;
   unifySystem: () => void;
   updateTranscendence: (updates: Partial<TranscendenceState>) => void;
+  
+  // Stage 11: Multi-Agent Consensus
+  agents: StrategicAgent[];
+  consensus: ConsensusMatrix;
+  runConsensusCycle: (currentPrice: number) => void;
+
+  // Stage 12: Adaptive Risk Governance
+  riskGovernance: RiskGovernanceState;
+  updateRiskGovernance: (updates: Partial<RiskGovernanceState>) => void;
+  checkRiskGovernance: () => void;
+
+  // Stage 13: Memory & Learning
+  memories: MemoryEntry[];
+  memoryBank: MemoryBank;
+  commitToMemory: (entry: Omit<MemoryEntry, 'id' | 'timestamp'>) => void;
+  recalibrateMemory: () => void;
+
+  // Stage 14: Simulation & Scenario Engine
+  simulation: SimulationState;
+  runScenarioSimulation: (scenarioId: string) => void;
+  resetScenarios: () => void;
 }
 
 export const useStore = create<AppStore>((set) => ({
@@ -491,5 +512,177 @@ export const useStore = create<AppStore>((set) => ({
   })),
   updateTranscendence: (updates) => set((state) => ({
     transcendence: { ...state.transcendence, ...updates }
+  })),
+
+  agents: [
+    { id: 'a1', name: 'MACRO_ORACLE', role: 'MACRO', status: 'DECIDED', signal: 'BULLISH', confidence: 82, reason: 'Fed pivot expectations increasing liquidity.' },
+    { id: 'a2', name: 'WHALE_WATCHER', role: 'WHALE', status: 'DECIDED', signal: 'BULLISH', confidence: 91, reason: 'Major accumulation in $3.2B wallet cluster.' },
+    { id: 'a3', name: 'TECH_GURU', role: 'TECH', status: 'ANALYZING', signal: 'NEUTRAL', confidence: 50, reason: 'RSI divergence on 4H frame.' },
+    { id: 'a4', name: 'SENTI_CORE', role: 'SENTIMENT', status: 'DECIDED', signal: 'BEARISH', confidence: 65, reason: 'Retail euphoria reaching dangerous levels.' },
+    { id: 'a5', name: 'RISK_GUARD', role: 'RISK', status: 'DECIDED', signal: 'NEUTRAL', confidence: 100, reason: 'Volatility spike imminent.' },
+  ],
+  consensus: {
+    overallScore: 78,
+    agreementRate: 60,
+    primaryDriver: 'WHALE_ACCUMULATION',
+    invalidationPoint: 0
+  },
+  runConsensusCycle: (currentPrice) => {
+    const updatedAgents: StrategicAgent[] = [
+      { id: 'a1', name: 'MACRO_ORACLE', role: 'MACRO', status: 'DECIDED', signal: Math.random() > 0.5 ? 'BULLISH' : 'BEARISH', confidence: Math.floor(Math.random() * 40 + 60), reason: 'Dynamic shifting of market correlations.' },
+      { id: 'a2', name: 'WHALE_WATCHER', role: 'WHALE', status: 'DECIDED', signal: Math.random() > 0.4 ? 'BULLISH' : 'BEARISH', confidence: Math.floor(Math.random() * 30 + 70), reason: 'Detecting stealth orders in order books.' },
+      { id: 'a3', name: 'TECH_GURU', role: 'TECH', status: 'DECIDED', signal: Math.random() > 0.6 ? 'BULLISH' : 'NEUTRAL', confidence: Math.floor(Math.random() * 50 + 40), reason: 'Backtesting breakout patterns.' },
+      { id: 'a4', name: 'SENTI_CORE', role: 'SENTIMENT', status: 'DECIDED', signal: Math.random() > 0.7 ? 'BEARISH' : 'NEUTRAL', confidence: Math.floor(Math.random() * 40 + 50), reason: 'Social volume spike detected.' },
+      { id: 'a5', name: 'RISK_GUARD', role: 'RISK', status: 'DECIDED', signal: 'NEUTRAL', confidence: 95, reason: 'Standard risk parameters maintained.' },
+    ];
+    
+    const bullishAgents = updatedAgents.filter(a => a.signal === 'BULLISH').length;
+    const bearishAgents = updatedAgents.filter(a => a.signal === 'BEARISH').length;
+    const agreement = Math.max(bullishAgents, bearishAgents) / 5 * 100;
+
+    set({ 
+      agents: updatedAgents,
+      consensus: {
+        overallScore: Math.floor(Math.random() * 20 + 70),
+        agreementRate: agreement,
+        primaryDriver: updatedAgents.sort((a,b) => b.confidence - a.confidence)[0].name,
+        invalidationPoint: currentPrice * (bullishAgents > bearishAgents ? 0.95 : 1.05)
+      }
+    });
+
+    set((state) => ({
+      systemLogs: [
+        { id: Math.random().toString(), type: 'NEURAL', message: `CONSENSUS_CYCLE_COMPLETE: Agreement at ${agreement}%.`, timestamp: Date.now() },
+        ...state.systemLogs
+      ]
+    }));
+  },
+
+  riskGovernance: {
+    regime: 'RANGING',
+    survivalMode: false,
+    maxLeverage: 10,
+    positionSizingFactor: 1.0,
+    psychologicalStressScore: 12,
+    portfolioStress: 8
+  },
+  updateRiskGovernance: (updates) => set((state) => ({
+    riskGovernance: { ...state.riskGovernance, ...updates }
+  })),
+
+  checkRiskGovernance: () => set((state) => {
+    const { marketData, psychology, consensus } = state;
+    if (marketData.length < 2) return state;
+
+    const last = marketData[marketData.length - 1];
+    const prev = marketData[marketData.length - 2];
+    const priceChange = Math.abs((last.price - prev.price) / prev.price) * 100;
+    
+    // Regime Detection
+    let regime: MarketRegime = state.riskGovernance.regime;
+    if (priceChange > 0.5) regime = 'VOLATILE';
+    else if (last.price > prev.price) regime = 'TRENDING_UP';
+    else if (last.price < prev.price) regime = 'TRENDING_DOWN';
+    else regime = 'RANGING';
+
+    // stress factors
+    const psychologicalStress = psychology.tradeFrequency * 15 + (psychology.currentMood === 'CALM' ? 0 : 40);
+    const portfolioStress = Math.min(100, Math.floor(Math.random() * 20 + 10)); // simulated
+
+    // Survival Mode logic
+    const shouldSurvival = psychologicalStress > 80 || portfolioStress > 80 || consensus.agreementRate < 30;
+
+    // Adapting parameters
+    const maxLeverage = shouldSurvival ? 2 : (regime === 'VOLATILE' ? 5 : 10);
+    const sizingFactor = Math.max(0.2, 1 - (psychologicalStress / 100) - (portfolioStress / 200));
+
+    return {
+      riskGovernance: {
+        ...state.riskGovernance,
+        regime,
+        survivalMode: shouldSurvival,
+        maxLeverage,
+        positionSizingFactor: Number(sizingFactor.toFixed(2)),
+        psychologicalStressScore: Math.min(100, psychologicalStress),
+        portfolioStress
+      }
+    };
+  }),
+
+  memories: [
+    { id: 'm1', timestamp: Date.now() - 86400000, regime: 'VOLATILE', outcome: 'SUCCESS', context: 'CPI data release. High volatility expansion.', learnings: ['Leverage reduction during news spikes prevents drawdown.', 'Consensus agreement > 80% is high reliability.'], importance: 92 },
+    { id: 'm2', timestamp: Date.now() - 172800000, regime: 'RANGING', outcome: 'FAILURE', context: 'Weekend trading session. Low liquidity hunt.', learnings: ['Avoid aggressive scalps when social volume is low.', 'Mean reversion models perform poorly in tight ranges.'], importance: 75 }
+  ],
+  memoryBank: {
+    totalEntries: 2,
+    efficiencyGain: 12.4,
+    lastRecalibration: Date.now(),
+    topStrategies: ['WHALE_FLOW_FOLLOWING', 'NEWS_VOLATILITY_ARBITRAGE']
+  },
+  commitToMemory: (entry) => set((state) => ({
+    memories: [
+      { id: Math.random().toString(), timestamp: Date.now(), ...entry },
+      ...state.memories.slice(0, 99)
+    ],
+    memoryBank: {
+      ...state.memoryBank,
+      totalEntries: state.memoryBank.totalEntries + 1,
+      efficiencyGain: state.memoryBank.efficiencyGain + 0.1
+    }
+  })),
+  recalibrateMemory: () => set((state) => ({
+    memoryBank: {
+      ...state.memoryBank,
+      efficiencyGain: state.memoryBank.efficiencyGain + (Math.random() * 2),
+      lastRecalibration: Date.now()
+    },
+    systemLogs: [
+      { id: Math.random().toString(), type: 'NEURAL', message: 'MEMORY_RECALIBRATION: Optimizing weights for historical success nodes.', timestamp: Date.now() },
+      ...state.systemLogs
+    ]
+  })),
+
+  simulation: {
+    activeScenarios: [
+      { id: 's1', name: 'THIÊN NGA ĐEN', type: 'BLACK_SWAN', probability: 5, impactScore: 98, description: 'Sự sụp đổ bất ngờ của một stablecoin top 3.', status: 'IDLE' },
+      { id: 's2', name: 'SỐC VĨ MÔ', type: 'MACRO_SHOCK', probability: 15, impactScore: 85, description: 'Fed tăng lãi suất thêm 100bps không báo trước.', status: 'IDLE' },
+      { id: 's3', name: 'NGHẼN THANH KHOẢN', type: 'LIQUIDITY_CASCADE', probability: 25, impactScore: 70, description: 'Chuỗi thanh lý tự động trên các sàn phái sinh.', status: 'IDLE' },
+      { id: 's4', name: 'ĐỔ VỠ TƯƠNG QUAN', type: 'CORRELATION_COLLAPSE', probability: 10, impactScore: 92, description: 'BTC và Gold cùng sụp đổ khi hệ thống thanh toán gặp sự cố.', status: 'IDLE' },
+    ],
+    globalStabilityIndex: 82,
+    projectedVolatility: 14.5,
+    lastSimulationRun: Date.now()
+  },
+  runScenarioSimulation: (scenarioId) => set((state) => {
+    const scenario = state.simulation.activeScenarios.find(s => s.id === scenarioId);
+    if (!scenario) return state;
+
+    const outcome = scenario.impactScore > 80 
+      ? `THIỆT HẠI NẶNG: Dự kiến drawdown ${Math.floor(scenario.impactScore/2)}%. Cần kích hoạt Survival Mode.`
+      : `KIỂM SOÁT ĐƯỢC: Risk Governance đủ khả năng hấp thụ cú sốc.`;
+
+    const updatedScenarios = state.simulation.activeScenarios.map(s => 
+      s.id === scenarioId ? { ...s, status: 'COMPLETED' as const, outcome } : s
+    );
+
+    return {
+      simulation: {
+        ...state.simulation,
+        activeScenarios: updatedScenarios,
+        globalStabilityIndex: Math.max(0, state.simulation.globalStabilityIndex - (scenario.impactScore / 10)),
+        lastSimulationRun: Date.now()
+      },
+      systemLogs: [
+        { id: Math.random().toString(), type: 'SECURITY', message: `SCENARIO_SIM_COMPLETED: ${scenario.name} analyzed.`, timestamp: Date.now() },
+        ...state.systemLogs
+      ]
+    };
+  }),
+  resetScenarios: () => set((state) => ({
+    simulation: {
+      ...state.simulation,
+      activeScenarios: state.simulation.activeScenarios.map(s => ({ ...s, status: 'IDLE', outcome: undefined })),
+      globalStabilityIndex: 82
+    }
   })),
 }));

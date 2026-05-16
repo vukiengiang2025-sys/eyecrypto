@@ -11,106 +11,105 @@ const MOOD_DATA = {
 };
 
 export default function PsychologyDashboard() {
-  const { psychology, portfolio } = useStore();
+  const { psychology } = useStore();
   const mood = MOOD_DATA[psychology.currentMood];
 
-  // Calculate some stats for visual interest
-  const winRate = portfolio.orders.length > 0 
-    ? (portfolio.orders.filter(o => o.status === 'COMPLETED').length / portfolio.orders.length) * 100 
-    : 0;
-
   return (
-    <div className="h-full bg-card-bg border border-card-border rounded-lg flex flex-col overflow-hidden font-mono">
-      <div className="p-3 border-b border-card-border flex items-center justify-between bg-black/20">
+    <div className="h-full bg-panel-bg border border-card-border rounded-lg flex flex-col overflow-hidden font-mono text-white relative">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_0%_0%,rgba(0,210,255,0.02),transparent)] pointer-events-none" />
+      
+      <div className="panel-header">
         <div className="flex items-center gap-2">
-          <Brain className="w-4 h-4 text-brand-primary" />
-          <h2 className="text-[10px] uppercase tracking-widest font-bold text-white">Chế độ Theo dõi Tâm lý (BIO-METRICS)</h2>
+          <Brain className="w-3 h-3 text-brand-primary" />
+          <h2 className="panel-title">PSYCHO_METRICS [BIO_SYNC]</h2>
         </div>
-        <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-brand-primary/10 border border-brand-primary/30">
-           <HeartPulse className="w-3 h-3 text-brand-primary animate-pulse" />
-           <span className="text-[8px] font-bold text-brand-primary">72 BPM</span>
+        <div className="flex items-center gap-2 px-2 py-0.5 bg-brand-primary/5 border border-brand-primary/20 rounded-sm">
+           <HeartPulse className="w-2.5 h-2.5 text-brand-primary animate-pulse" />
+           <span className="text-[7px] font-black text-brand-primary uppercase tracking-widest">72_BPM</span>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto terminal-scroll p-6 space-y-8">
-        {/* Current Mood Display */}
-        <div className="flex flex-col items-center text-center space-y-4">
+      <div className="flex-1 overflow-y-auto terminal-scroll p-4 space-y-6 bg-panel-bg/40">
+        {/* State Visualizer */}
+        <div className="flex flex-col items-center py-4 relative group">
+           <div className="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none">
+              <div className="w-24 h-24 rounded-full border border-brand-primary animate-spin-slow" />
+              <div className="absolute w-20 h-20 rounded-full border border-brand-primary/20 animate-reverse-spin" />
+           </div>
+           
            <motion.div 
-             animate={{ scale: [1, 1.1, 1] }}
-             transition={{ duration: 3, repeat: Infinity }}
-             className={`p-4 rounded-full bg-white/5 border border-white/10 ${mood.color}`}
+             animate={{ scale: [1, 1.05, 1] }}
+             transition={{ duration: 4, repeat: Infinity }}
+             className={`mb-4 relative z-10 ${mood.color}`}
            >
              {mood.icon}
            </motion.div>
-           <div className="space-y-1">
-             <h3 className={`text-sm font-black uppercase tracking-[0.2em] ${mood.color}`}>{mood.label}</h3>
-             <p className="text-[10px] text-gray-400 max-w-[250px] leading-relaxed italic">
+           
+           <div className="text-center relative z-10">
+             <h3 className={`text-[11px] font-black uppercase tracking-[0.3em] mb-1.5 ${mood.color}`}>{mood.label}</h3>
+             <p className="text-[9px] text-[#E2E8F0] opacity-60 leading-relaxed font-medium italic max-w-[200px] mx-auto">
                "{mood.desc}"
              </p>
            </div>
         </div>
 
-        {/* Psychological Metrics */}
-        <div className="grid grid-cols-2 gap-4">
+        {/* Neural Parameters */}
+        <div className="grid grid-cols-1 gap-4">
           <div className="space-y-2">
-            <div className="flex justify-between text-[8px] uppercase">
-              <span className="text-gray-500">Chỉ số Tham lam</span>
-              <span className="text-red-500 font-bold">64%</span>
+            <div className="flex justify-between items-end">
+              <span className="text-[7px] font-black text-gray-700 uppercase tracking-widest">Avarice_Index</span>
+              <span className="text-[9px] font-black text-brand-risk">64.0%</span>
             </div>
-            <div className="h-1 bg-black/40 rounded-full overflow-hidden">
-               <div className="h-full bg-red-500 w-[64%]" />
+            <div className="h-[2px] bg-white/5 rounded-full overflow-hidden">
+               <div className="h-full bg-brand-risk/60 w-[64%] shadow-[0_0_8px_#FF0055]" />
             </div>
           </div>
           <div className="space-y-2">
-            <div className="flex justify-between text-[8px] uppercase">
-              <span className="text-gray-500">Độ tập trung</span>
-              <span className="text-brand-primary font-bold">89%</span>
+            <div className="flex justify-between items-end">
+              <span className="text-[7px] font-black text-gray-700 uppercase tracking-widest">Cognitive_Focus</span>
+              <span className="text-[9px] font-black text-brand-primary">89.2%</span>
             </div>
-            <div className="h-1 bg-black/40 rounded-full overflow-hidden">
-               <div className="h-full bg-brand-primary w-[89%]" />
+            <div className="h-[2px] bg-white/5 rounded-full overflow-hidden">
+               <div className="h-full bg-brand-primary/60 w-[89%] shadow-[0_0_8px_#00D2FF]" />
             </div>
           </div>
         </div>
 
-        {/* Behavioral Warnings */}
+        {/* System Warnings */}
         <div className="space-y-3">
-          <div className="flex items-center gap-2">
-            <Activity className="w-3 h-3 text-yellow-500" />
-            <h4 className="text-[9px] font-bold text-white uppercase tracking-wider">Cảnh báo Hành vi</h4>
+          <div className="flex items-center gap-2 opacity-40">
+            <Activity className="w-2.5 h-2.5 text-brand-accent" />
+            <span className="text-[7px] font-black text-white uppercase tracking-[0.2em]">BEHAVIORAL_LOGS</span>
           </div>
-          <div className="space-y-2">
-            <div className="p-3 bg-white/5 border border-white/10 rounded text-[10px] space-y-2">
-              <div className="flex items-center gap-2 text-yellow-500">
-                <AlertCircle className="w-3 h-3" />
-                <span className="font-bold uppercase tracking-tighter">Tần suất giao dịch cao</span>
-              </div>
-              <p className="text-gray-500 leading-tight">
-                Bạn đã thực hiện 5 lệnh trong 10 phút qua. Khả năng rủi ro do "Overtrading" đang ở mức cao.
-              </p>
-            </div>
+          <div className="p-3 bg-black/40 border-l border-brand-accent/40 rounded-sm space-y-1.5">
+             <div className="flex items-center gap-2 text-brand-accent">
+               <AlertCircle className="w-2.5 h-2.5" />
+               <span className="text-[8px] font-black uppercase tracking-widest">High_Velocity_detected</span>
+             </div>
+             <p className="text-[8px] text-gray-500 font-medium leading-tight">
+               5 orders executed within [10m]. Risk of overtrading detected in behavioral stream.
+             </p>
           </div>
         </div>
 
-        {/* Recovery Suggestion */}
-        <div className="bg-brand-primary/5 border border-brand-primary/20 p-4 rounded-lg flex gap-3 items-start">
-           <Zap className="w-5 h-5 text-brand-primary shrink-0 mt-0.5" />
+        {/* Cognitive Advice */}
+        <div className="p-3 bg-brand-primary/[0.03] border border-brand-primary/10 rounded-sm flex gap-3 items-start group">
+           <Zap className="w-4 h-4 text-brand-primary shrink-0 opacity-40 group-hover:opacity-100 transition-opacity" />
            <div className="space-y-1">
-             <span className="text-[9px] font-bold text-brand-primary uppercase">Miro-Advice: "Ngắt kết nối 15p"</span>
-             <p className="text-[9px] text-gray-400 leading-relaxed italic">
-               Dữ liệu cho thấy hiệu suất của bạn giảm 20% sau 2 giờ giao dịch liên tục. Hãy ra ngoài hít thở không khí và quay lại khi chỉ số BIO đạt ngưỡng ZEN.
+             <span className="text-[8px] font-black text-brand-primary uppercase tracking-widest">Miro_Protocol: "Zen_Recalibration"</span>
+             <p className="text-[8px] text-[#A0AEC0] italic leading-relaxed opacity-80">
+               Decouple from stream for [15m]. BIO_SYNC data suggests performance degradation.
              </p>
            </div>
         </div>
       </div>
       
-      <div className="p-3 bg-black/40 border-t border-card-border flex items-center justify-between">
-         <div className="flex items-center gap-2">
-           <div className="w-2 h-2 rounded-full bg-brand-primary animate-ping" />
-           <span className="text-[8px] text-gray-500 uppercase">Live Neuro-Syncing...</span>
+      <div className="p-2 bg-black border-t border-card-border flex items-center justify-between">
+         <div className="flex items-center gap-3">
+            <div className="w-1.5 h-1.5 rounded-full bg-brand-primary shadow-[0_0_8px_#00D2FF]" />
+            <span className="text-[7px] font-black text-gray-700 uppercase tracking-widest">Neurometric_Link_Active</span>
          </div>
-         <button className="text-[8px] font-black text-brand-primary uppercase border border-brand-primary/30 px-2 py-1 rounded hover:bg-brand-primary/10 transition-colors">
-           RE-CALIBRATE
-         </button>
+         <Activity className="w-2.5 h-2.5 text-brand-primary/20" />
       </div>
     </div>
   );

@@ -16,27 +16,30 @@ export default function PriceChart({ data, title, selectedAsset, onAssetChange }
   const isUp = currentPrice >= prevPrice;
 
   return (
-    <div className="w-full h-full bg-dashboard-bg border border-card-border rounded-lg p-4 flex flex-col">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
-        <div className="flex flex-col">
-          <h3 className="text-xs font-mono uppercase tracking-widest text-gray-400">{title}</h3>
-          <div className="flex gap-4 text-[10px] font-mono mt-1">
-            <span className="text-brand-primary">T.TIẾP: ${currentPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-            <span className={isUp ? 'text-brand-primary' : 'text-brand-secondary'}>
+    <div className="w-full h-full bg-panel-bg border border-card-border rounded-lg p-5 flex flex-col font-mono">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-2">
+             <div className="w-1 h-3 bg-brand-primary" />
+             <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-white/80">{title}</h3>
+          </div>
+          <div className="flex items-baseline gap-3 mt-1">
+            <span className="text-2xl font-black text-white tracking-tighter">${currentPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            <span className={`text-[11px] font-black tracking-widest ${isUp ? 'text-brand-primary' : 'text-brand-risk'}`}>
               {isUp ? '▲' : '▼'} {((Math.abs(currentPrice - data[0]?.price || 0) / (data[0]?.price || 1)) * 100).toFixed(2)}%
             </span>
           </div>
         </div>
         
-        <div className="flex bg-black/40 p-1 rounded border border-white/5 self-end sm:self-auto">
+        <div className="flex bg-black p-1 rounded-sm border border-white/5 self-end sm:self-auto shadow-inner">
           {(['WTI', 'BTC', 'ETH', 'GOLD'] as AssetSymbol[]).map((asset) => (
             <button
               key={asset}
               onClick={() => onAssetChange(asset)}
-              className={`px-3 py-1 rounded text-[10px] font-mono transition-all ${
+              className={`px-4 py-1.5 rounded-[2px] text-[9px] font-black transition-all tracking-widest ${
                 selectedAsset === asset 
-                  ? 'bg-brand-primary text-black font-bold' 
-                  : 'text-gray-500 hover:text-gray-300'
+                  ? 'bg-brand-primary text-black' 
+                  : 'text-gray-600 hover:text-gray-400'
               }`}
             >
               {asset}
@@ -45,16 +48,17 @@ export default function PriceChart({ data, title, selectedAsset, onAssetChange }
         </div>
       </div>
       
-      <div className="flex-1 w-full min-h-0">
+      <div className="flex-1 w-full min-h-0 relative">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none" />
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data}>
             <defs>
               <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#00ffaa" stopOpacity={0.3}/>
-                <stop offset="95%" stopColor="#00ffaa" stopOpacity={0}/>
+                <stop offset="5%" stopColor={isUp ? "#00D2FF" : "#EF4444"} stopOpacity={0.2}/>
+                <stop offset="95%" stopColor={isUp ? "#00D2FF" : "#EF4444"} stopOpacity={0}/>
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" vertical={false} />
+            <CartesianGrid strokeDasharray="0" stroke="rgba(255,255,255,0.05)" vertical={false} />
             <XAxis 
               dataKey="time" 
               hide 
@@ -62,19 +66,20 @@ export default function PriceChart({ data, title, selectedAsset, onAssetChange }
             <YAxis 
               domain={['auto', 'auto']}
               orientation="right"
-              tick={{ fontSize: 10, fill: '#6b7280', fontFamily: 'JetBrains Mono' }}
+              tick={{ fontSize: 9, fill: '#4B5563', fontWeight: '900', fontFamily: 'JetBrains Mono' }}
               axisLine={false}
               tickLine={false}
             />
             <Tooltip 
-              contentStyle={{ backgroundColor: '#0d1117', border: '1px solid #1f2937', borderRadius: '4px' }}
+              contentStyle={{ backgroundColor: '#0B0F14', border: '1px solid #1f2937', borderRadius: '2px', fontSize: '10px' }}
               labelStyle={{ display: 'none' }}
-              itemStyle={{ color: '#00ffaa', fontSize: '12px', fontFamily: 'JetBrains Mono' }}
+              itemStyle={{ color: isUp ? '#00D2FF' : '#EF4444', fontWeight: 'bold', fontFamily: 'JetBrains Mono' }}
             />
             <Area 
-              type="monotone" 
+              type="stepAfter" 
               dataKey="price" 
-              stroke="#00ffaa" 
+              stroke={isUp ? "#00D2FF" : "#EF4444"} 
+              strokeWidth={1.5}
               fillOpacity={1} 
               fill="url(#colorPrice)" 
               dot={false}

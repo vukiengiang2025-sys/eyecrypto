@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
+import { Layers } from 'lucide-react';
 import { GraphNode, GraphLink } from '../types';
 
 interface RelationshipGraphProps {
@@ -45,18 +46,22 @@ export default function RelationshipGraph({ nodes, links }: RelationshipGraphPro
           .on("end", dragended) as any);
 
       node.append("circle")
-        .attr("r", width < 500 ? 7 : 10)
-        .attr("fill", d => d.sentiment > 0 ? "#00ffaa" : (d.sentiment < 0 ? "#ff0055" : "#6366f1"))
-        .attr("filter", "blur(1px)")
-        .style("cursor", "pointer");
+        .attr("r", width < 500 ? 5 : 6)
+        .attr("fill", d => d.sentiment > 0 ? "#00D2FF" : (d.sentiment < 0 ? "#FF0055" : "#6366F1"))
+        .attr("stroke", d => d.sentiment > 0 ? "rgba(0,210,255,0.3)" : (d.sentiment < 0 ? "rgba(255,0,85,0.3)" : "rgba(99,102,241,0.3)"))
+        .attr("stroke-width", 4)
+        .style("cursor", "crosshair");
 
       node.append("text")
-        .attr("dx", width < 500 ? 10 : 15)
+        .attr("dx", width < 500 ? 10 : 12)
         .attr("dy", ".35em")
         .text(d => d.label)
-        .attr("fill", "#94a3b8")
-        .attr("font-size", width < 500 ? "8px" : "10px")
-        .attr("font-family", "JetBrains Mono");
+        .attr("fill", "#64748B")
+        .attr("font-size", width < 500 ? "7px" : "8px")
+        .attr("font-family", "JetBrains Mono")
+        .attr("font-weight", "900")
+        .attr("letter-spacing", "0.1em")
+        .text(d => d.label.toUpperCase());
 
       simulation.on("tick", () => {
         link
@@ -104,11 +109,15 @@ export default function RelationshipGraph({ nodes, links }: RelationshipGraphPro
   }, [nodes, links]);
 
   return (
-    <div className="w-full h-full relative overflow-hidden bg-dashboard-bg/50 border border-card-border rounded-lg">
-      <div className="absolute top-2 left-4 z-10">
-        <span className="text-[10px] font-mono text-brand-primary uppercase tracking-widest opacity-60">Mô phỏng Đồ thị Quan hệ</span>
+    <div className="w-full h-full relative overflow-hidden bg-panel-bg/40 border border-card-border rounded-lg">
+      <div className="panel-header bg-transparent border-none">
+        <div className="flex items-center gap-2">
+          <Layers className="w-3 h-3 text-brand-primary" />
+          <h2 className="panel-title">RELATIONAL_MATRIX [GRAPH_01]</h2>
+        </div>
       </div>
-      <svg ref={svgRef} className="w-full h-full" />
+      <div className="absolute inset-0 pointer-events-none opacity-20 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:30px_30px] z-0" />
+      <svg ref={svgRef} className="w-full h-full relative z-10" />
     </div>
   );
 }
